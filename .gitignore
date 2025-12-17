@@ -1,11 +1,46 @@
-venv/ 
-__pycache__/ 
-.env 
-*.log 
+# Python virtual environments
+venv/
+env/
+.venv/
 
+# Environment variables
+.env
+.env.*
 
-
+# Python cache
 __pycache__/
-myenv
-celery_app.py
-classification_service.py
+*.pyc
+*.pyo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Database
+*.sqlite3
+
+# LangGraph / Redis
+.redis/
+
+
+
+
+# =========================
+# Alembic (SAFE IGNORE)
+# =========================
+
+# Alembic cache
+alembic/__pycache__/
+
+# Alembic log files (if any)
+alembic/*.log
+
+alembic/
+alembic.ini

@@ -44,9 +44,6 @@ async def upload_document(
 
 
 
-
-
-
     return {
         "message": "Files uploaded successfully",
         "status": "Queue",
