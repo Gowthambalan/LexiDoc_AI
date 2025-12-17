@@ -1,0 +1,14 @@
+[console_scripts]
+check-format=scripts:check_format
+check-lint=scripts:check_lint
+check-mypy=scripts:check_mypy
+check-sort-imports=scripts:check_sort_imports
+coverage-html=scripts:coverage_html
+coverage-report=scripts:coverage_report
+find-dead-code=scripts:find_dead_code
+format=scripts:format
+sort-imports=scripts:sort_imports
+test=scripts:test
+test-coverage=scripts:test_coverage
+test-verbose=scripts:test_verbose
+
