@@ -23,6 +23,7 @@ class Document(Base):
     user_id = Column(Integer, ForeignKey("user_management.id"))
     filename = Column(String)
     classified_status = Column(Boolean, default=False)
+    classified_class = Column(String)
     uploaded_time = Column(TIMESTAMP, server_default=func.now())
     status = Column(String)  # Queue / In progress / Classified
     confidence = Column(Float)
