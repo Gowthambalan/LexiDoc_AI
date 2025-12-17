@@ -55,16 +55,16 @@ def retrieve(state: AgentState):
             )
         )
         state['context'] = results
-        
+
         # Better debug output
         print(f"Retrieved {len(results)} documents")
         for i, doc in enumerate(results):
             print(f"Document {i+1} preview: {doc.page_content[:200]}...")
-            
+
     except Exception as e:
         print(f"Error retrieving context: {e}")
         state['context'] = []
-    
+
     return state
 
 
@@ -78,9 +78,9 @@ def generation(state: AgentState):
     context_parts = []
     for i, doc in enumerate(state['context'], 1):
         context_parts.append(f"--- Section {i} ---\n{doc.page_content}")
-    
+
     context_text = "\n\n".join(context_parts)
-    
+
     # Debug: Show what's being sent to LLM
     print(f"\n=== Context being sent to LLM ===")
     print(f"Length: {len(context_text)} characters")
@@ -94,17 +94,17 @@ def generation(state: AgentState):
             context=context_text,
             question=state['question']
         )
-        
+
         # Call the LLM
         response = model.invoke(formatted_prompt)
-        
+
         print(f"Generated response: {response.content}")
         state['answer'] = response.content
-        
+
     except Exception as e:
         print(f"Error generating answer: {e}")
         state['answer'] = f"Error generating answer: {str(e)}"
-    
+
     return state
 
 
@@ -122,3 +122,4 @@ graph.add_edge("generation", END)
 rag_app = graph.compile(
     checkpointer=checkpointer
 )
+ 
