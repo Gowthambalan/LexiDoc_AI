@@ -41,3 +41,6 @@ alembic/__pycache__/
 
 # Alembic log files (if any)
 alembic/*.log
+
+alembic/
+alembic.ini
