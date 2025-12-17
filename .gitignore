@@ -28,3 +28,16 @@ Thumbs.db
 
 # LangGraph / Redis
 .redis/
+
+
+
+
+# =========================
+# Alembic (SAFE IGNORE)
+# =========================
+
+# Alembic cache
+alembic/__pycache__/
+
+# Alembic log files (if any)
+alembic/*.log
