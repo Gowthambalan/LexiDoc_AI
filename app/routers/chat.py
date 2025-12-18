@@ -9,7 +9,6 @@ from app.db.models import Chat
 from app.services.redis_service import get_session, save_session
 from app.core.rag_graph import rag_app
 import tiktoken
-
 router = APIRouter(tags=['Chat'])
 
 class ChatRequest(BaseModel):
@@ -75,3 +74,7 @@ def chat_endpoint(payload: ChatRequest, db: Session = Depends(get_db)):
         session_id=session_id,
         file_id=payload.file_id
     )
+
+
+
+
