@@ -28,6 +28,7 @@ async def upload_document(
 
         file_bytes = await file.read()
         total_tokens,cost,document_type,confidence_score=basic_tasks(file_bytes,file.filename)
+        print(document_type)
 
         new_doc = Document(
             user_id=user_id,

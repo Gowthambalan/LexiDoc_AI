@@ -44,7 +44,6 @@ def basic_tasks(file_bytes: bytes, file_name: str):
 
     total_tokens = count_tokens(full_text)
     cost = (total_tokens / 1000) * COST_PER_1K_TOKENS
-   
 
     return total_tokens,cost,classification_result.document_type,classification_result.confidence_score
     
