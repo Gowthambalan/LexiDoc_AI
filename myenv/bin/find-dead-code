@@ -1,7 +1,0 @@
-#!/home/athul/DocGPT-2.0/myenv/bin/python3.12
-import sys
-from scripts import find_dead_code
-if __name__ == '__main__':
-    if sys.argv[0].endswith('.exe'):
-        sys.argv[0] = sys.argv[0][:-4]
-    sys.exit(find_dead_code())

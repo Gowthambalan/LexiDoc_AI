@@ -5,7 +5,8 @@ import os
 from app.db.deps import get_db
 from app.db.models import Document
 from app.services.vector_db import convert_bytes_documents
-
+from app.tasks.document_tasks import basic_tasks
+from datetime import datetime
 
 router = APIRouter(tags=["Documents"])
 
@@ -22,12 +23,18 @@ async def upload_document(
         # file_id = str(uuid4())
 
         file_bytes = await file.read()
+        total_tokens,cost,document_type,confidence_score=basic_tasks(file_bytes,file.filename)
 
         new_doc = Document(
             user_id=user_id,
             filename=file.filename,
-            status="Queue",
-            classified_status=False,
+            classified_status=True,
+            classified_class=document_type,
+            uploaded_time=datetime.now(),
+            status="Classified",
+            confidence=confidence_score,
+            token=total_tokens,
+            cost=cost
 
         )
 
@@ -41,6 +48,7 @@ async def upload_document(
             "status": "Queue"
         })
         convert_bytes_documents(file_bytes,file.filename,new_doc.id)
+
 
 
 
