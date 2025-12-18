@@ -13,7 +13,7 @@ def get_session(session_id: str) -> Optional[dict]:
     """
     data = r.get(session_id)
     if data:
-        return json.loads(data)  # Convert JSON string to Python dict
+        return json.loads(data) 
     return None
 
 def save_session(session_id: str, session_state: dict):

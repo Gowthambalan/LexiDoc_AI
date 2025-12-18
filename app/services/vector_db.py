@@ -43,7 +43,6 @@
         
 
 
-# app/services/vector_store_service.py
 
 from langchain_qdrant import QdrantVectorStore
 from langchain_openai import OpenAIEmbeddings
@@ -74,14 +73,12 @@ def convert_bytes_documents(file_bytes: bytes, file_name: str, doc_id: str):
     file = io.BytesIO(file_bytes)
     file_reader = PdfReader(file)
 
-    # ✅ Collect first 2 pages for classification
     full_text = ""
     for page in file_reader.pages[:2]:
         text = page.extract_text()
         if text:
             full_text += text + "\n"
 
-    # ✅ FIX: use full_text (not last page text)
     classification_result = structured_llm.invoke(full_text)
 
     docs = []
@@ -106,4 +103,4 @@ def convert_bytes_documents(file_bytes: bytes, file_name: str, doc_id: str):
     # Store in Qdrant
     vector_store.add_documents(docs)
 
-    return docs, classification_result.document_type, classification_result.confidence_score
+    return docs

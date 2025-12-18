@@ -1,7 +1,40 @@
-docker run -d -p 6333:6333 -p 6334:6334 --name qdrant qdrant/qdrant
-docker ps
-docker run -d -p 6379:6379 --name redis redis
+# create container(qdrant, redis)
+=============================================
 
+docker run -d -p 6333:6333 -p 6334:6334 --name qdrant qdrant/qdrant
+docker run -d -p 6379:6379 --name redis redis
+================================================================
 
 
 docker run -d --name redis-stack -p 6379:6379 redis/redis-stack:latest
+
+
+# container checking in docker 
+
+docker ps
+
+
+/start command 
+
+docker start redis
+docker start qdrant
+
+
+/remove docker container
+
+docker rm redis
+docker rm qdrant
+
+
+
+alembic command 
+
+
+pip install alembic
+alembic init alembic
+
+alembic current
+alembic history
+
+alembic revision --autogenerate -m "update columns values "
+alembic upgrade head

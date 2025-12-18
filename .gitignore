@@ -29,7 +29,9 @@ Thumbs.db
 # LangGraph / Redis
 .redis/
 
+alembic
 
+how_to_run
 
 
 # =========================
@@ -44,3 +46,4 @@ alembic/*.log
 
 alembic/
 alembic.ini
+myenv/
