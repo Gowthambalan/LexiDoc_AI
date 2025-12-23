@@ -1,5 +1,6 @@
 # from app.db.deps import get_db
 # from app.db.database import SessionLocal
+# from sqlalchemy.orm import Session
 from pypdf import PdfReader
 import io
 from langchain_core.documents import Document
@@ -24,6 +25,9 @@ structured_llm = model.with_structured_output(
 )
 
 def basic_tasks(file_bytes: bytes, file_name: str):
+
+
+
  
     file = io.BytesIO(file_bytes)
     file_reader = PdfReader(file)

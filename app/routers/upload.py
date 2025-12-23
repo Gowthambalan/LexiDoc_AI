@@ -27,8 +27,29 @@ async def upload_document(
         # file_id = str(uuid4())
 
         file_bytes = await file.read()
-        total_tokens,cost,document_type,confidence_score=basic_tasks(file_bytes,file.filename)
-        print(document_type)
+        # new_doc = Document(
+        #     user_id=user_id,
+        #     filename=file.filename,
+        #     classified_status=False,
+   
+        #     uploaded_time=datetime.now(),
+        #     status="Queue",
+        #     # confidence=confidence_score,
+        #     # token=total_tokens,
+        #     # cost=cost
+
+        # )
+        # db.add(new_doc)
+        # db.commit()
+        # db.refresh(new_doc)
+        try:
+            total_tokens,cost,document_type,confidence_score=basic_tasks(file_bytes,file.filename)
+            status_value="Classified"
+
+        except Exception as e:
+            status_value="Error"
+
+        
 
         new_doc = Document(
             user_id=user_id,
@@ -36,7 +57,7 @@ async def upload_document(
             classified_status=True,
             classified_class=document_type,
             uploaded_time=datetime.now(),
-            status="Classified",
+            status=status_value,
             confidence=confidence_score,
             token=total_tokens,
             cost=cost
