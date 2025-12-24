@@ -18,15 +18,23 @@ class DocumentListResponse(BaseModel):
 #get-metadata/{file_id}/
 
 
+# class DocumentMetadataResponse(BaseModel):
+#     filename: str
+#     court: Optional[str] = None
+#     uploaded_time: datetime
+#     folder_path: Optional[str] = None
+
+#     class Config:
+#         from_attributes = True
+
 class DocumentMetadataResponse(BaseModel):
     filename: str
-    court: Optional[str] = None
     uploaded_time: datetime
-    folder_path: Optional[str] = None
+    classified_class: Optional[str] = None
+    court: Optional[str] = None
 
     class Config:
         from_attributes = True
-
 
 #update-metadata/{file_id}
 

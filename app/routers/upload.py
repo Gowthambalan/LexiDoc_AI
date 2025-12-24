@@ -42,6 +42,7 @@ async def upload_document(
         # db.add(new_doc)
         # db.commit()
         # db.refresh(new_doc)
+        
         try:
             total_tokens,cost,document_type,confidence_score=basic_tasks(file_bytes,file.filename)
             status_value="Classified"
@@ -130,9 +131,9 @@ def get_metadata(
         "filename": metadata.filename,
         "court": metadata.court,
         "uploaded_time": metadata.uploaded_time,
-        "folder_path": metadata.folder_path,
+        # "folder_path": metadata.folder_path,
+        "classified_class": metadata.classified_class,
     }
-
 
 
 @router.put("/update-metadata/{file_id}")
@@ -153,3 +154,4 @@ def update_metadata(
         "message": "Metadata updated successfully",
         "file_id": file_id
     }
+
