@@ -104,3 +104,40 @@ def convert_bytes_documents(file_bytes: bytes, file_name: str, doc_id: str):
     vector_store.add_documents(docs)
 
     return docs
+
+
+
+# ===========================
+
+from qdrant_client.models import Filter, FieldCondition, MatchValue
+from qdrant_client import QdrantClient
+
+# Qdrant low-level client (needed for payload updates)
+qdrant_client = QdrantClient(url="http://localhost:6333")
+
+COLLECTION_NAME = "legal_pages"
+
+
+def update_document_type_in_vector_db(
+    document_id: int,
+    new_document_type: str
+):
+    """
+    Update only document_type metadata for all vectors
+    belonging to a document_id
+    """
+
+    qdrant_client.set_payload(
+        collection_name=COLLECTION_NAME,
+        payload={
+            "document_type": new_document_type
+        },
+        points=Filter(
+            must=[
+                FieldCondition(
+                    key="document_id",
+                    match=MatchValue(value=document_id)
+                )
+            ]
+        )
+    )
