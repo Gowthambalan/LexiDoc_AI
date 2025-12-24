@@ -68,11 +68,12 @@ async def upload_document(
         db.add(new_doc)
         db.commit()
         db.refresh(new_doc)
+        print(status_value)
 
         uploaded_files.append({
             "file_id": new_doc.id,
             "file_name": file.filename,
-            "status": "Queue"
+            "status": status_value
         })
         convert_bytes_documents(file_bytes,file.filename,new_doc.id)
 
@@ -81,7 +82,7 @@ async def upload_document(
 
     return {
         "message": "Files uploaded successfully",
-        "status": "Queue",
+        "status": status_value,
         "files": uploaded_files
     }
 
