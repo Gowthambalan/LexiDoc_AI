@@ -123,11 +123,12 @@ def document_list(payload:DocumentListRequest,db:Session=Depends(get_db)):
     query=(db.query(
         Document.filename,
             Document.classified_class.label("class_type"),
-            Document.classified_status,
+            Document.status,
             Document.confidence.label("confidence_score"),
             User.username,
             Document.uploaded_time
     ).join(User, User.id == Document.user_id))
+    # print('the query is >>>>>>>',query)
 
     if payload and payload.search:
         query=query.filter(Document.filename.ilike(f"%{payload.search}"))
@@ -141,13 +142,13 @@ def document_list(payload:DocumentListRequest,db:Session=Depends(get_db)):
         )
 
     results=query.order_by(Document.uploaded_time.desc()).all()
-
+    # print(results)
     response=[]
     for r in results:
         response.append({
                        "filename": r.filename,
             "class_type": r.class_type,
-            "classified_status": r.classified_status,
+            "classified_status": r.status,
             "confidence_score": r.confidence_score,
             "username": r.username,
             "uploaded_time": r.uploaded_time
