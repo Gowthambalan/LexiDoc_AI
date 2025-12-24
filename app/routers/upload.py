@@ -75,7 +75,7 @@ async def upload_document(
             "file_name": file.filename,
             "status": status_value
         })
-        convert_bytes_documents(file_bytes,file.filename,new_doc.id)
+        convert_bytes_documents(file_bytes,file.filename,new_doc.id,document_type,confidence_score)
 
 
 
