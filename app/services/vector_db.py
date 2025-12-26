@@ -52,6 +52,9 @@ from langchain_core.documents import Document
 from app.schemas.classification import DocumentClassification
 from app.llm import model
 
+#maximum pages 
+MAX_PAGE=10
+
 # Embedding model
 embeddings_model = OpenAIEmbeddings(model="text-embedding-3-large")
 
@@ -83,25 +86,27 @@ def convert_bytes_documents(file_bytes: bytes, file_name: str, doc_id,document_t
 
     docs = []
     for page_num, page in enumerate(file_reader.pages):
-        text = page.extract_text()
-        if not text:
-            continue
+        if page_num<MAX_PAGE:
+            text = page.extract_text()
+            if not text:
+                continue
 
-        docs.append(
-            Document(
-                page_content=text,
-                metadata={
-                    "source": file_name,
-                    "page": page_num + 1,
-                    "document_id": doc_id,
-                    "document_type": document_type,
-                    "confidence_score": confidence_score,
-                },
+            docs.append(
+                Document(
+                    page_content=text,
+                    metadata={
+                        "source": file_name,
+                        "page": page_num + 1,
+                        "document_id": doc_id,
+                        "document_type": document_type,
+                        "confidence_score": confidence_score,
+                    },
+                )
             )
-        )
 
     # Store in Qdrant
     vector_store.add_documents(docs)
+
 
     return docs
 

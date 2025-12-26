@@ -8,12 +8,12 @@ from datetime import datetime
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 from typing import Optional
-
+from app.utils.auth import get_current_user
 
 router = APIRouter(tags=["Dashboard"])
 
 @router.get("/dashboard-card")
-def dash_card_details(db: Session = Depends(get_db)):
+def dash_card_details(db: Session = Depends(get_db),current_user: int = Depends(get_current_user)):
 
     result = (
         db.query(
@@ -24,8 +24,8 @@ def dash_card_details(db: Session = Depends(get_db)):
             ).label("total_classified"),
 
             func.count(
-                case((Document.status == "Queue", 1))
-            ).label("total_queued"),
+                case((Document.status == "Error", 1))
+            ).label("total_error"),
 
             func.coalesce(func.sum(Document.token), 0).label("total_tokens"),
             func.coalesce(func.sum(Document.cost), 0).label("total_cost"),
@@ -36,37 +36,66 @@ def dash_card_details(db: Session = Depends(get_db)):
     return {
         "total_docs": result.total_docs,
         "total_classified": result.total_classified,
-        "total_queued": result.total_queued,
+        "total_error": result.total_error,
         "total_tokens": result.total_tokens,
         "total_cost": result.total_cost,
     }
 
 
-@router.get("/token-details")
-def token_details(db: Session = Depends(get_db)):
+# @router.get("/token-details")
+# def token_details(db: Session = Depends(get_db),current_user: int = Depends(get_current_user)):
 
-    last_7_days = datetime.utcnow() - timedelta(days=7)
+#     last_7_days = datetime.utcnow() - timedelta(days=7)
+
+#     results = (
+#         db.query(
+#             func.date(Document.uploaded_time).label("day"),
+#             func.coalesce(func.sum(Document.token), 0).label("total_tokens")
+#         )
+#         .filter(Document.uploaded_time >= last_7_days)
+#         .group_by(func.date(Document.uploaded_time))
+#         .order_by(func.date(Document.uploaded_time).desc())
+#         .all()
+#     )
+
+#     response = {
+#         day.strftime("%B %d"): total_tokens
+#         for day, total_tokens in results
+#     }
+
+#     return response
+@router.get("/token-details")
+def token_details(
+    db: Session = Depends(get_db),
+    current_user: int = Depends(get_current_user)
+):
+    last_7_days = datetime.utcnow().date() - timedelta(days=6)
 
     results = (
         db.query(
             func.date(Document.uploaded_time).label("day"),
             func.coalesce(func.sum(Document.token), 0).label("total_tokens")
         )
-        .filter(Document.uploaded_time >= last_7_days)
+        .filter(func.date(Document.uploaded_time) >= last_7_days)
         .group_by(func.date(Document.uploaded_time))
-        .order_by(func.date(Document.uploaded_time).desc())
         .all()
     )
-
-    response = {
-        day.strftime("%B %d"): total_tokens
+    db_data = {
+        day: total_tokens
         for day, total_tokens in results
     }
+    response = {}
+
+    for i in range(7):
+        day = last_7_days + timedelta(days=i)
+        response[day.strftime("%B %d")] = db_data.get(day, 0)
 
     return response
 
+
+
 @router.get("/document-type-graph")
-def document_type_graph(db: Session = Depends(get_db)):
+def document_type_graph(db: Session = Depends(get_db),current_user: int = Depends(get_current_user)):
 
     results = (
         db.query(
@@ -88,14 +117,14 @@ def document_type_graph(db: Session = Depends(get_db)):
     return response
 
 @router.post("/list-sessions")
-def list_sessions(user_id: int, db: Session = Depends(get_db)):
-
+def list_sessions(user_id: int = Depends(get_current_user), db: Session = Depends(get_db),current_user: int = Depends(get_current_user)):
+    user = db.query(User).filter(User.email == current_user).first()
     results = (
         db.query(
             Chat.session_id,
             Chat.content
         )
-        .filter(Chat.user_id == user_id)
+        .filter(Chat.user_id == user.id)
         .distinct(Chat.session_id)
         .order_by(Chat.session_id, asc(Chat.id))
         .all()
@@ -157,7 +186,7 @@ class DocumentListRequest(BaseModel):
 
 
 @router.post("/document-list")
-def document_list(payload:DocumentListRequest,db:Session=Depends(get_db)):
+def document_list(payload:DocumentListRequest,db:Session=Depends(get_db),current_user: int = Depends(get_current_user)):
 
     query=(db.query(
         Document.filename,
