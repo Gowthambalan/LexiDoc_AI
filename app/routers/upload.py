@@ -181,8 +181,9 @@ def get_document_list(
     current_user: int = Depends(get_current_user),
 ):
     "auth added "
+    user = db.query(User).filter(User.email == current_user).first()
 
-    documents = get_documents_by_user(current_user, db)
+    documents = get_documents_by_user(user.id, db)
 
     if not documents:
         raise HTTPException(status_code=404, detail="No documents found")
