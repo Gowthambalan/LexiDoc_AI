@@ -1,7 +1,7 @@
 # doc-list/{user-id}
 
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional,Literal
 from datetime import datetime
 
 class DocumentListResponse(BaseModel):
@@ -37,10 +37,17 @@ class DocumentMetadataResponse(BaseModel):
         from_attributes = True
 
 #update-metadata/{file_id}
+ClassifiedClass = Literal[
+    "Court Order",
+    "Affidavit",
+    "Petition",
+    "Contract",
+    "Notice"
+]
 
 class DocumentMetadataUpdate(BaseModel):
     filename: Optional[str] = None
-    classified_class: Optional[str] = None
+    classified_class: Optional[ClassifiedClass] = None
     court: Optional[str] = None
     uploaded_time: Optional[datetime] = None
     petitioner: Optional[str] = None

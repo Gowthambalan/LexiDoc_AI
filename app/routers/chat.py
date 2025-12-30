@@ -9,10 +9,13 @@ from app.db.models import Chat
 from app.services.redis_service import get_session, save_session
 from app.core.rag_graph import rag_app
 import tiktoken
+from app.utils.auth import get_current_user
+from app.db.models import User
+
 router = APIRouter(tags=['Chat'])
 
 class ChatRequest(BaseModel):
-    user_id: int
+
     input: str
     file_id: int
     session_id: str = None
@@ -31,19 +34,19 @@ def count_tokens(text: str, model_name="gpt-4o-mini") -> int:
 
 
 @router.post("/chat", response_model=ChatResponse)
-def chat_endpoint(payload: ChatRequest, db: Session = Depends(get_db)):
+def chat_endpoint(payload: ChatRequest, db: Session = Depends(get_db),current_user: int = Depends(get_current_user)):
 
     start_time=time()  
 
     session_id=payload.session_id or str(uuid4())
-    print("the session id is ",session_id)
+    # print("the session id is ",session_id)
     session_state = get_session(session_id) or {"chat_history": []}
-    print("session stat  is :",session_state)
+    # print("session stat  is :",session_state)
     config = {'configurable': {'thread_id': session_id}}
-    result_state=rag_app.invoke({"question":payload.input,"file_id":payload.file_id},config=config)
+    result_state=rag_app.invoke({"question":payload.input,"file_id":payload.file_id,"chat_history":session_state.get("chat_history", [])},config=config)
     answer=result_state.answer if hasattr(result_state, "answer") else result_state["answer"]
     # answer = result_state.get("answer", "No answer generated.")
-    print(answer)
+    # print(answer)
     session_state["chat_history"].append({"role": "user", "content": payload.input})
     session_state["chat_history"].append({"role": "assistant", "content": answer})
     save_session(session_id, session_state)
@@ -55,9 +58,9 @@ def chat_endpoint(payload: ChatRequest, db: Session = Depends(get_db)):
     output_tokens=count_tokens(answer)
     cost = (input_tokens / 1000) * INPUT_COST_PER_1K + (output_tokens / 1000) * OUTPUT_COST_PER_1K
 
- 
+    user = db.query(User).filter(User.email == current_user).first()
     chat_entry =Chat(
-        user_id=payload.user_id,
+        user_id=user.id,
         session_id=session_id,
         content=session_state["chat_history"], 
         qtoken=input_tokens,
