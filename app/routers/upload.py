@@ -130,7 +130,7 @@ def get_metadata(
 
     return {
         "filename": metadata.filename,
-        "court": metadata.court,
+        # "court": metadata.court,
         "uploaded_time": metadata.uploaded_time,
         # "folder_path": metadata.folder_path,
         "classified_class": metadata.classified_class,

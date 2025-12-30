@@ -39,9 +39,9 @@ def get_document_metadata(file_id: int, db: Session):
             Document.filename,
             Document.uploaded_time,
             Document.classified_class,
-            DocumentMeta.court
+            # DocumentMeta.court
         )
-        .join(DocumentMeta, Document.id == DocumentMeta.file_id)
+        # .join(DocumentMeta, Document.id == DocumentMeta.file_id)
         .filter(Document.id == file_id)
         .first()
     )

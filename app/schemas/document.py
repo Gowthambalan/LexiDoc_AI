@@ -31,7 +31,7 @@ class DocumentMetadataResponse(BaseModel):
     filename: str
     uploaded_time: datetime
     classified_class: Optional[str] = None
-    court: Optional[str] = None
+    # court: Optional[str] = None
 
     class Config:
         from_attributes = True

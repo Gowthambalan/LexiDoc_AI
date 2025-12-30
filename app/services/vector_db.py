@@ -130,7 +130,7 @@ def update_document_type_in_vector_db(
     qdrant_client.set_payload(
         collection_name=COLLECTION_NAME,
         payload={
-            "document_type": new_document_type
+            "metadata.document_type": new_document_type
         },
         points=Filter(
             must=[
