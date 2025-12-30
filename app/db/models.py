@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP
-from app.db.database import Base
+from sqlalchemy import Column, Integer, String, Boolean, Float, TIMESTAMP, ForeignKey
 from sqlalchemy.sql import func
+from sqlalchemy import JSON
+from app.db.database import Base
 
 class User(Base):
     __tablename__ = "user_management"
@@ -12,9 +13,6 @@ class User(Base):
     role = Column(String)  # Admin / User
     last_login = Column(TIMESTAMP, server_default=func.now())
 
-
-
-from sqlalchemy import Column, Integer, String, Boolean, Float, TIMESTAMP, ForeignKey
 
 class Document(Base):
     __tablename__ = "documents"
@@ -40,9 +38,6 @@ class DocumentMeta(Base):
     petitioners = Column(String)
     respondents = Column(String)
     folder_path = Column(String)
-
-
-from sqlalchemy import JSON
 
 class Chat(Base):
     __tablename__ = "chat"

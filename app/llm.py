@@ -1,4 +1,12 @@
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-load_dotenv()
-model = ChatOpenAI(model='gpt-4o-mini')
+from app.core import config
+
+
+# ===============================
+# LLM instance
+# ===============================
+model = ChatOpenAI(
+    model=config.LLM_MODEL,
+    temperature=config.LLM_TEMPERATURE,
+    api_key=config.OPENAI_API_KEY
+)

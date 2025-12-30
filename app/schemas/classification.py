@@ -1,7 +1,5 @@
-
 from pydantic import BaseModel,Field
 from typing import Literal
-
 
 class DocumentClassification(BaseModel):
     document_type : Literal["Court Order","Affidavit","Petition","Contract","Notice"] = Field(

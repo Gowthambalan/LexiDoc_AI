@@ -1,25 +1,3 @@
-# from fastapi import APIRouter, Depends
-# from sqlalchemy.orm import Session
-# from app.db.models import User
-# from app.db.deps import get_db
-
-# router = APIRouter(prefix="/users", tags=["Users"])
-
-# @router.post("/")
-# def create_user(email: str, password: str, username: str, role: str, db: Session = Depends(get_db)):
-#     user = User(
-#         email=email,
-#         password=password,
-#         username=username,
-#         role=role
-#     )
-#     db.add(user)
-#     db.commit()
-#     db.refresh(user)
-#     return user
-
-
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.models import User
@@ -27,9 +5,13 @@ from app.db.deps import get_db
 from app.utils.auth import get_current_user
 from app.utils.security import hash_password, verify_password
 from app.utils.jwt import create_access_token, create_refresh_token
-from app.utils.schemas import UserRegister, UserLogin, TokenResponse
+from app.schemas.user import UserRegister, UserLogin, TokenResponse
 
 router = APIRouter(tags=["Users"])
+
+# ----------------------------
+# Register User
+# ----------------------------
 
 @router.post("/user-register")
 def register_user(payload: UserRegister, db: Session = Depends(get_db)):
@@ -47,6 +29,9 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "User registered successfully"}
 
+# ----------------------------
+# Login User
+# ----------------------------
 
 @router.post("/user-login", response_model=TokenResponse)
 def login_user(payload: UserLogin, db: Session = Depends(get_db)):
@@ -62,6 +47,11 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
         "access_token": access_token,
         "refresh_token": refresh_token
     }
+
+
+# ----------------------------
+# Get Current User
+# ----------------------------
 
 @router.get("/me")
 def read_me(current_user: str = Depends(get_current_user)):

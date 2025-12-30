@@ -1,15 +1,20 @@
+from typing_extensions import TypedDict
+from typing import List
 
-
-from typing_extensions import TypedDict, List
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, END
-from app.core.redis_checkpoint import checkpointer
 from qdrant_client.models import Filter, FieldCondition, MatchValue
+
+from app.core.redis_checkpoint import checkpointer
 from app.services.vector_db import vector_store
 from app.llm import model
 
 
+
+# =========================
+# State Definition
+# =========================
 class AgentState(TypedDict):
     question: str
     file_id: str
@@ -17,7 +22,11 @@ class AgentState(TypedDict):
     answer: str
     chat_history:List[dict]
 
-# Prompt for initial document summary (used only on upload)
+
+# =========================
+# Prompts
+# =========================
+
 SUMMARY_PROMPT = ChatPromptTemplate.from_template("""
 You are a legal document analysis assistant.
 
@@ -70,6 +79,10 @@ Question:
 Answer (be detailed and specific):
 """)
 
+# =========================
+# Graph Nodes
+# =========================
+
 def retrieve(state: AgentState):
     """Retrieve relevant context from vector store"""
     try:
@@ -78,7 +91,7 @@ def retrieve(state: AgentState):
      
         results = vector_store.similarity_search(
             state['question'],
-            k=5,  # Increased from 3 to get more context
+            k=5, 
             filter=Filter(
                 must=[
                     FieldCondition(
@@ -89,11 +102,6 @@ def retrieve(state: AgentState):
             )
         )
         state['context'] = results
-
-        # Better debug output
-        # print(f"Retrieved {len(results)} documents")
-        # for i, doc in enumerate(results):
-        #     print(f"Document {i+1} preview: {doc.page_content[:200]}...")
 
     except Exception as e:
         print(f"Error retrieving context: {e}")
@@ -124,10 +132,6 @@ def generation(state: AgentState):
                 meta_data.append(f"{key}:{value}")
     metadata_text = "\n".join(meta_data) if meta_data else "No metadata available"
 
-
-    
-    
-
     #history 
     chat_history_text=""
     if state.get("chat_history"):
@@ -141,18 +145,9 @@ def generation(state: AgentState):
     else:
         chat_history_text=""
 
-    # # Debug: Show what's being sent to LLM
-    # print(f"\n=== Context being sent to LLM ===")
-    # print(f"Length: {len(context_text)} characters")
-    # print(f"First 500 chars: {context_text[:500]}...")
-    # print(f"Question: {state['question']}")
-    # print("=" * 50 + "\n")
-
     try:
-        # Format the prompt
         if state['question']=="Explain a summry of the document":
-        # print(state['context'][0])
-        
+      
             formatted_prompt = SUMMARY_PROMPT.format(
                         metadata=metadata_text,
                         context=context_text  
@@ -166,16 +161,16 @@ def generation(state: AgentState):
 
         # Call the LLM
         response = model.invoke(formatted_prompt)
-
-        # print(f"Generated response: {response.content}")
         state['answer'] = response.content
 
     except Exception as e:
-        # print(f"Error generating answer: {e}")
         state['answer'] = f"Error generating answer: {str(e)}"
 
     return state
 
+# =========================
+# Graph Definition
+# =========================
 
 graph = StateGraph(AgentState)
 
@@ -185,10 +180,5 @@ graph.add_node("generation", generation)
 graph.set_entry_point("retrieve")
 graph.add_edge("retrieve", "generation")
 graph.add_edge("generation", END)
-
-# Compile graph with Redis checkpoint
-# rag_app = graph.compile(checkpointer=checkpointer)
-rag_app = graph.compile(
-    checkpointer=checkpointer
-)
+rag_app = graph.compile(checkpointer=checkpointer)
  

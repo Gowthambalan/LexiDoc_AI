@@ -3,7 +3,7 @@
 
 docker run -d -p 6333:6333 -p 6334:6334 --name qdrant qdrant/qdrant
 docker run -d -p 6379:6379 --name redis redis
-================================================================
+=============================================
 
 
 docker run -d --name redis-stack -p 6379:6379 redis/redis-stack:latest
