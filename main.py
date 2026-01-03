@@ -6,6 +6,7 @@ from app.routers import dashboard
 
 app = FastAPI()
 
+
 app.include_router(user.router)
 app.include_router(upload.router)
 app.include_router(chat.router)
