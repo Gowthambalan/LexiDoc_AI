@@ -15,7 +15,7 @@ app.include_router(dashboard.router)
 
 @app.get("/")
 def root():
-    return {"status": "API Running"}
+    return {"status": "API Running"} 
 
 
 from app.routers.recent_responses import router as recent_response_router
