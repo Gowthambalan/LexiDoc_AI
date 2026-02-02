@@ -20,7 +20,7 @@ class AgentState(TypedDict):
     file_id: str
     context: List[Document]
     answer: str
-    chat_history:List[dict]
+    chat_history:List[dict] 
 
 
 # =========================
