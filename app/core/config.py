@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 #==========================
-#REDIS
+#REDIS 
 #==========================
 
 REDIS_URI: str = os.getenv("REDIS_URI")
