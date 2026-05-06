@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.routers import user
 from app.routers import upload
 from app.routers import chat
-from app.routers import dashboard
+from app.routers import dashboard 
 
 app = FastAPI()
 
